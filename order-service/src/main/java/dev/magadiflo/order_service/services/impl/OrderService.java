@@ -1,5 +1,6 @@
 package dev.magadiflo.order_service.services.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.magadiflo.order_service.models.dtos.CustomerOrderDto;
 import dev.magadiflo.order_service.models.dtos.OrderEvent;
 import dev.magadiflo.order_service.models.entities.Order;
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Service;
 public class OrderService implements IOrderService {
 
     private final IOrderRepository orderRepository;
-    private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void createOrder(CustomerOrderDto customerOrderDto) {
@@ -31,7 +33,8 @@ public class OrderService implements IOrderService {
 
             // Send message to new-order-topic topic
             OrderEvent orderEvent = new OrderEvent(customerOrder, "ORDER_CREATED");
-            this.kafkaTemplate.send("new-order-topic", orderEvent);
+            String orderEventJsonString = this.objectMapper.writeValueAsString(orderEvent);
+            this.kafkaTemplate.send("new-order-topic", orderEventJsonString);
         } catch (Exception e) {
             orderToSave.setStatus("FAILED");
             this.orderRepository.save(orderToSave);
