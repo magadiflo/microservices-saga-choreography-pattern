@@ -1,1 +1,32 @@
+server:
+  port: 8084
 
+spring:
+  application:
+    name: delivery-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3310/db_delivery_service
+    username: magadiflo
+    password: magadiflo
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: orders-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+logging:
+  level:
+    org.hibernate.SQL: debug
