@@ -16,7 +16,7 @@ import java.util.Optional;
 @Component
 public class ReverseOrderEventListener {
 
-    private IOrderRepository orderRepository;
+    private final IOrderRepository orderRepository;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "reversed-orders-topic", groupId = "orders-group")

@@ -39,7 +39,11 @@ public class StockEventListener {
             }
 
             items.forEach(warehouseDB -> {
-                warehouseDB.setQuantity(warehouseDB.getQuantity() - order.quantity());
+                int newQuantity = warehouseDB.getQuantity() - order.quantity();
+                if (newQuantity < 0) {
+                    throw new RuntimeException("Stock no disponible");
+                }
+                warehouseDB.setQuantity(newQuantity);
                 this.stockRepository.save(warehouseDB);
             });
 
